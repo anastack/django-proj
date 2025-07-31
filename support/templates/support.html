@@ -1,0 +1,1002 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NC - Техническая поддержка</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: url("{% static 'support_bg.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+      }
+
+      .container {
+        position: relative;
+        z-index: 10;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px 0;
+      }
+
+      .header-title {
+        font-size: 3.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        background: linear-gradient(45deg, #64b5f6, #1e88e5, #42a5f5, #90caf9);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease-in-out infinite;
+        filter: drop-shadow(0 2px 4px rgba(30, 136, 229, 0.4));
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 400;
+      }
+
+      .breadcrumbs {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .breadcrumbs a {
+        color: #64b5f6;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .breadcrumbs a:hover {
+        color: #90caf9;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        min-height: 70vh;
+      }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        transition: all 0.3s ease;
+      }
+
+      .glass-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+
+      .faq-section {
+        overflow-y: auto;
+        max-height: 80vh;
+      }
+
+      .faq-header {
+        margin-bottom: 30px;
+      }
+
+      .faq-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        text-align: center;
+      }
+
+      .faq-items-container {
+        overflow-y: auto;
+        max-height: calc(80vh - 100px);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+      }
+
+      .faq-item {
+        margin-bottom: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-left: 3px solid rgba(100, 181, 246, 0.6);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+
+      .faq-item:hover {
+        border-color: rgba(255, 255, 255, 0.1);
+        border-left-color: rgba(100, 181, 246, 0.8);
+      }
+
+      .faq-question {
+        padding: 20px 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #fff;
+        transition: all 0.3s ease;
+      }
+
+      .faq-question:hover {
+        color: #64b5f6;
+      }
+
+      .faq-toggle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(100, 181, 246, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #64b5f6;
+        transition: all 0.3s ease;
+      }
+
+      .faq-question.active .faq-toggle {
+        transform: rotate(45deg);
+        background: rgba(100, 181, 246, 0.3);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+      }
+
+      .faq-answer.active {
+        max-height: 200px;
+        padding: 0 24px 20px 24px;
+      }
+
+      .chat-section {
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        background: transparent;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 0;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-left: 3px solid rgba(100, 181, 246, 0.6);
+        padding: 40px;
+        transition: all 0.3s ease;
+      }
+
+      .chat-section:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .chat-header {
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .chat-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+
+      .chat-status {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4ade80;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .message {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        animation: fadeInUp 0.3s ease;
+      }
+
+      .message.user {
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .message.support .message-avatar {
+        background: linear-gradient(135deg, #64b5f6, #1e88e5);
+      }
+
+      .message.user .message-avatar {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      }
+
+      .message-content {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        color: #fff;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+
+      .message.support .message-content {
+        background: rgba(100, 181, 246, 0.15);
+        border-bottom-left-radius: 6px;
+      }
+
+      .message.user .message-content {
+        background: rgba(255, 107, 107, 0.2);
+        border-bottom-right-radius: 6px;
+      }
+
+      .message-time {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+        text-align: right;
+      }
+
+      .message.support .message-time {
+        text-align: left;
+      }
+
+      .chat-input-area {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 20px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+      }
+
+      .chat-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: none;
+        max-height: 200px;
+        min-height: 44px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .chat-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .chat-input:focus {
+        outline: none;
+        border-color: #64b5f6;
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .send-button {
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #64b5f6, #1e88e5);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        font-family: inherit;
+        white-space: nowrap;
+      }
+
+      .send-button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #42a5f5, #1976d2);
+        transform: translateY(-2px);
+      }
+
+      .send-button:disabled {
+        background: rgba(255, 255, 255, 0.2);
+        cursor: not-allowed;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        margin-left: 48px;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+      }
+
+      .typing-dots span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-8px);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .faq-items-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .faq-items-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+
+      .faq-items-container::-webkit-scrollbar-thumb {
+        background: rgba(100, 181, 246, 0.4);
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .faq-items-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 181, 246, 0.6);
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .chat-messages::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(100, 181, 246, 0.4);
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 181, 246, 0.6);
+      }
+
+      @media (max-width: 1024px) {
+        .main-content {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+
+        .header-title {
+          font-size: 2.5rem;
+        }
+
+        .glass-panel {
+          padding: 30px;
+        }
+
+        .chat-section {
+          height: 60vh;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px 10px;
+        }
+        .header-title {
+          font-size: 1.5rem;
+          padding: 0 10px;
+        }
+        .main-content {
+          gap: 12px;
+        }
+        .content-text {
+          font-size: 1.1rem;
+          padding: 0 10px;
+        }
+        .content-subtitle {
+          font-size: 0.95rem;
+          padding: 0 10px;
+        }
+        .back-button {
+          top: 10px;
+          left: 10px;
+          width: 38px;
+          height: 38px;
+          font-size: 1rem;
+        }
+        body {
+          background-size: cover;
+          background-position: center;
+        }
+        .faq-section {
+          max-height: 50vh;
+        }
+
+        .chat-section {
+          height: 50vh;
+        }
+
+        .message-content {
+          max-width: 85%;
+        }
+      }
+      @media (max-width: 480px) {
+        .header-title {
+          font-size: 1.1rem;
+        }
+        .content-text {
+          font-size: 0.95rem;
+        }
+        .content-subtitle {
+          font-size: 0.85rem;
+        }
+      }
+
+      .back-button {
+        position: fixed;
+        top: 30px;
+        left: 30px;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(1.05);
+      }
+
+      .content-text {
+        font-size: 3rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+      }
+      .content-subtitle {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        font-weight: 300;
+      }
+      .empty-support {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 50vh;
+        gap: 20px;
+      }
+      .image-preview-fa {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        border: 1px solid #fff2;
+        padding: 6px 12px;
+        margin: 4px 0;
+        max-width: 180px;
+      }
+      .image-preview-fa img {
+        max-width: 48px;
+        max-height: 48px;
+        border-radius: 6px;
+        border: 1px solid #fff2;
+      }
+      .image-preview-fa .fa-image {
+        color: #64b5f6;
+        font-size: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay"></div>
+
+    <a href="{% url 'index' %}" class="back-button">←</a>
+
+    <div class="container">
+      <div class="header">
+        <h1 class="header-title">Техническая поддержка</h1>
+        <p class="header-subtitle">
+          Мы всегда готовы помочь вам решить любые вопросы
+        </p>
+        <div class="breadcrumbs">
+          <a href="{% url 'index' %}">Главная</a> › Техническая поддержка
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div>
+          <div class="faq-section">
+            <div class="faq-header">
+              <h2 class="faq-title">Часто задаваемые вопросы</h2>
+            </div>
+
+            <div class="faq-items-container">
+              <div class="faq-item">
+                <div class="faq-question">
+                  <span>Когда открытие?</span>
+                  <div class="faq-toggle">+</div>
+                </div>
+                <div class="faq-answer">
+                  Работаем ежедневно, чтобы ускорить этот день!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-section">
+          <div class="chat-header">
+            <div class="chat-title">Поддержка</div>
+            <div class="chat-status">
+              Задайте свой вопрос, жалобу или предложение — мы обязательно
+              ответим!
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">S</div>
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <form class="chat-input-area" id="chatForm" autocomplete="off">
+            <div
+              id="attachedImagePreviewContainer"
+              style="display: none; align-items: center"
+            ></div>
+            <textarea
+              class="chat-input"
+              id="chatInput"
+              placeholder="Введите сообщение..."
+              rows="1"
+            ></textarea>
+            <input
+              type="file"
+              id="chatImage"
+              accept="image/*"
+              multiple
+              style="display: none"
+            />
+            <label
+              for="chatImage"
+              class="send-button"
+              style="padding: 8px 10px; cursor: pointer"
+              ><i class="fa-regular fa-image"></i
+            ></label>
+            <button type="submit" class="send-button" id="sendBtn">
+              Отправить
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let attachedImages = [];
+      let chatMessageInterval;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeFAQ();
+        initializeChat();
+        loadChatMessages();
+        startChatRefresh();
+      });
+
+      function initializeFAQ() {
+        const faqItems = document.querySelectorAll(".faq-item");
+
+        faqItems.forEach((item) => {
+          const question = item.querySelector(".faq-question");
+          const answer = item.querySelector(".faq-answer");
+
+          question.addEventListener("click", function () {
+            const isActive = answer.classList.contains("active");
+
+            if (isActive) {
+              answer.classList.remove("active");
+              question.classList.remove("active");
+            } else {
+              answer.classList.add("active");
+              question.classList.add("active");
+            }
+          });
+        });
+      }
+
+      function initializeChat() {
+        const chatForm = document.getElementById("chatForm");
+        const chatInput = document.getElementById("chatInput");
+        const chatMessages = document.getElementById("chatMessages");
+        const chatImage = document.getElementById("chatImage");
+        const sendBtn = document.getElementById("sendBtn");
+
+        chatInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          const newHeight = Math.min(this.scrollHeight, 200);
+          this.style.height = newHeight + "px";
+        });
+
+        chatInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+        chatForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendMessage();
+        });
+
+        chatImage.addEventListener("change", function () {
+          if (chatImage.files && chatImage.files.length > 0) {
+            Array.from(chatImage.files).forEach((file) => {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                attachedImages.push({
+                  dataUrl: e.target.result,
+                  name: file.name,
+                });
+                showAttachedImagesPreview();
+              };
+              reader.readAsDataURL(file);
+            });
+            chatImage.value = "";
+          }
+        });
+      }
+
+      function showAttachedImagesPreview() {
+        const container = document.getElementById(
+          "attachedImagePreviewContainer"
+        );
+        container.innerHTML = "";
+        if (attachedImages.length > 0) {
+          container.style.display = "flex";
+          attachedImages.forEach((img, idx) => {
+            const preview = document.createElement("div");
+            preview.className = "image-preview-fa";
+            preview.innerHTML = `
+                        <i class='fa-regular fa-image'></i>
+                        <img src='${img.dataUrl}' alt='${img.name}'/>
+                        <button type='button' class='remove-image-btn' title='Убрать' 
+                                style='margin-left:8px;background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;' 
+                                data-idx='${idx}'>&times;</button>
+                    `;
+
+            preview.querySelector("button").onclick = function () {
+              attachedImages.splice(idx, 1);
+              showAttachedImagesPreview();
+            };
+
+            container.appendChild(preview);
+          });
+        } else {
+          container.style.display = "none";
+        }
+      }
+      function dataURLtoBlob(dataurl) {
+        const arr = dataurl.split(","),
+          mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+      }
+
+      async function sendMessage() {
+        const chatInput = document.getElementById("chatInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const message = chatInput.value.trim();
+
+        if (!message && attachedImages.length === 0) return;
+        let displayMessage = message;
+        if (attachedImages.length > 0) {
+          displayMessage += " [Изображения: " + attachedImages.length + "]";
+        }
+
+        addMessage("user", displayMessage);
+        chatInput.value = "";
+        chatInput.style.height = "auto";
+
+        const formData = new FormData();
+        formData.append("message", message);
+        if (attachedImages.length > 0) {
+          const blob = dataURLtoBlob(attachedImages[0].dataUrl);
+          formData.append("image", blob, attachedImages[0].name);
+        }
+        attachedImages = [];
+        document.getElementById("attachedImagePreviewContainer").innerHTML = "";
+        document.getElementById("attachedImagePreviewContainer").style.display =
+          "none";
+        sendBtn.disabled = true;
+        sendBtn.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin"></i> Отправка...';
+
+        try {
+          const csrftoken = getCookie("csrftoken");
+          const response = await fetch("/api/chat/send", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": csrftoken,
+            },
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            addMessage(
+              "support",
+              "Ошибка отправки сообщения: " +
+                (result.error || "Неизвестная ошибка")
+            );
+          }
+        } catch (error) {
+          console.error("Ошибка отправки сообщения:", error);
+          addMessage(
+            "support",
+            "Ошибка соединения с сервером. Попробуйте позже."
+          );
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Отправить";
+        }
+      }
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      async function loadChatMessages() {
+        try {
+          const response = await fetch("/api/chat/messages");
+          const result = await response.json();
+
+          if (result.success) {
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.innerHTML = "";
+
+            result.messages.forEach((message) => {
+              addMessage(
+                message.sender === "user" ? "user" : "support",
+                message.message,
+                message.timestamp,
+                false,
+                message.image_url
+              );
+            });
+          }
+        } catch (error) {
+          console.error("Ошибка загрузки сообщений:", error);
+        }
+      }
+
+      function startChatRefresh() {
+        chatMessageInterval = setInterval(loadChatMessages, 5000); // Обновляем каждые 5 секунд
+      }
+
+      function addMessage(
+        sender,
+        text,
+        timestamp = null,
+        scroll = true,
+        imageUrl
+      ) {
+        const chatMessages = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "message " + sender;
+
+        const currentTime =
+          timestamp ||
+          new Date().toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        let messageContent = escapeHtml(text);
+        if (imageUrl) {
+          if (messageContent.length > 0) {
+            messageContent += "<br>";
+          }
+          messageContent += `<img src="${imageUrl}" alt="Изображение" style="max-width:200px; border-radius:8px; margin-top:5px;">`;
+        }
+
+        messageDiv.innerHTML = `
+  <div class="message-avatar">${sender === "user" ? "У" : "S"}</div>
+  <div class="message-content">
+      ${messageContent}
+      <div class="message-time">${currentTime}</div>
+  </div>
+`;
+
+        chatMessages.appendChild(messageDiv);
+
+        if (scroll) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }
+
+      function escapeHtml(text) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        };
+        return text.replace(/[&<>"']/g, function (m) {
+          return map[m];
+        });
+      }
+      window.addEventListener("beforeunload", function () {
+        if (chatMessageInterval) {
+          clearInterval(chatMessageInterval);
+        }
+      });
+    </script>
+  </body>
+</html>

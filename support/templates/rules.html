@@ -1,0 +1,764 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Правила - NC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: url("{% static 'rules.png' %}") no-repeat center center fixed;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+        .header-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #64b5f6, #1e88e5, #42a5f5, #90caf9);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(30, 136, 229, 0.4));
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+        .breadcrumbs {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .breadcrumbs a {
+            color: #64b5f6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .breadcrumbs a:hover {
+            color: #90caf9;
+        }
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .rules-panel {
+            display: block;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid rgba(100, 181, 246, 0.6);
+            border-radius: 0;
+            transition: all 0.3s ease;
+            width: 100%;
+            color: #fff;
+            margin: 0 auto 32px auto;
+            max-width: 900px;
+        }
+        .rules-panel:hover {
+            background: rgba(100, 181, 246, 0.07);
+            border-color: rgba(255, 255, 255, 0.1);
+            border-left-color: rgba(100, 181, 246, 0.8);
+        }
+        .rules-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            background: linear-gradient(45deg, #fff, #e3f2fd, #90caf9);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(30, 136, 229, 0.18));
+            text-align: left;
+        }
+        .rules-meta {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.85);
+            margin: 0 32px 18px 56px;
+            line-height: 1.6;
+        }
+        .rules-divider {
+            border: none;
+            border-top: 1.5px solid rgba(255,255,255,0.13);
+            margin: 0 32px 28px 56px;
+        }
+        .rules-chapter {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #64b5f6;
+            margin: 32px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+        .rules-list {
+            margin: 0 0 0 0;
+            padding: 0 0 0 0;
+            list-style: none;
+        }
+        .rules-list li {
+            margin-bottom: 18px;
+            padding-left: 0;
+            position: relative;
+            font-size: 1.08rem;
+            line-height: 1.7;
+            color: #fff;
+        }
+        .rules-list li .fa {
+            color: #64b5f6;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        .rules-list li strong {
+            color: #64b5f6;
+        }
+        .rules-sublist {
+            margin: 10px 0 0 32px;
+            padding: 0;
+            list-style: disc;
+            color: rgba(255,255,255,0.92);
+            font-size: 1rem;
+        }
+        .rules-sublist li {
+            margin-bottom: 6px;
+        }
+        .rules-quote {
+            margin: 40px auto 0 auto;
+            max-width: 900px;
+            background: linear-gradient(90deg, rgba(100,181,246,0.10) 0%, rgba(30,136,229,0.10) 100%);
+            border-left: 4px solid #64b5f6;
+            border-radius: 0 12px 12px 0;
+            padding: 28px 32px;
+            font-size: 1.15rem;
+            color: #e3f2fd;
+            font-style: italic;
+            box-shadow: 0 4px 24px 0 rgba(100,181,246,0.08);
+        }
+        .rules-quote strong {
+            color: #fff;
+            font-weight: 700;
+        }
+        .rules-quote em {
+            color: #90caf9;
+        }
+        .content-text {
+            font-size: 3rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+        .content-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            font-weight: 300;
+        }
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        @media (max-width: 1024px) {
+            .header-title {
+                font-size: 2.5rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            .header-title {
+                font-size: 1.5rem;
+                padding: 0 10px;
+            }
+            .main-content {
+                gap: 12px;
+            }
+            .content-text {
+                font-size: 1.1rem;
+                padding: 0 10px;
+            }
+            .content-subtitle {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+            .back-button {
+                top: 10px;
+                left: 10px;
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+            body {
+                background-size: cover;
+                background-position: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .content-text {
+                font-size: 0.95rem;
+            }
+            .content-subtitle {
+                font-size: 0.85rem;
+            }
+        }
+        .rules-intro {
+            text-align: center;
+            margin: 0 auto 32px auto;
+            max-width: 900px;
+            opacity: 0;
+            animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1) forwards;
+        }
+        .rules-intro-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, #64b5f6, #1e88e5, #42a5f5, #90caf9);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(30, 136, 229, 0.25));
+        }
+        .rules-intro-meta {
+            font-size: 1.08rem;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: none; }
+        }
+        .cheat-list-toggle {
+            color: #64b5f6;
+            cursor: pointer;
+            font-size: 0.98rem;
+            margin: 8px 0 0 0;
+            display: inline-block;
+            text-decoration: underline dotted;
+            transition: color 0.2s;
+        }
+        .cheat-list-toggle:hover {
+            color: #90caf9;
+        }
+        .cheat-list-block {
+            margin: 16px 0 0 0;
+            padding: 18px 24px;
+            background: rgba(100,181,246,0.07);
+            border: 1px solid rgba(100,181,246,0.18);
+            border-radius: 10px;
+            box-shadow: 0 2px 12px 0 rgba(100,181,246,0.06);
+            display: none;
+        }
+        .cheat-list-block.active {
+            display: block;
+            animation: fadeIn 0.5s cubic-bezier(.4,0,.2,1);
+        }
+        .cheat-list-title {
+            font-size: 1.08rem;
+            color: #64b5f6;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .cheat-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 32px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .cheat-list li {
+            width: 220px;
+            font-size: 0.98rem;
+            color: #fff;
+            margin-bottom: 6px;
+            white-space: nowrap;
+        }
+        @media (max-width: 700px) {
+            .cheat-list {
+                flex-direction: column;
+                gap: 0;
+            }
+            .cheat-list li {
+                width: 100%;
+            }
+        }
+        .rules-footer {
+            margin: 48px auto 0 auto;
+            max-width: 900px;
+            text-align: center;
+            color: #90caf9;
+            font-size: 1.05rem;
+            opacity: 0.85;
+            padding: 18px 0 8px 0;
+            border-top: 1px solid rgba(100,181,246,0.13);
+            letter-spacing: 0.2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <a href="{% url 'index' %}" class="back-button">←</a>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Правила</h1>
+            <p class="header-subtitle">Основные правила сервера</p>
+            <div class="breadcrumbs">
+                <a href="{% url 'index' %}">Главная</a> › Правила
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="rules-intro">
+                <div class="rules-intro-title">ОБЩИЕ ПРАВИЛА СЕРВЕРА</div>
+                <div class="rules-intro-meta">
+                    <span><strong>Версия:</strong> Minecraft 1.21.4 (ванилла)</span><br>
+                    <span><strong>Формат:</strong> мультиплеер, с возможностью использования модов (оптимизировано для честной и дружелюбной игры)</span><br>
+                    <span><strong>Цель проекта:</strong> создание дружелюбного, честного и устойчивого сообщества игроков.</span>
+                </div>
+            </div>
+            <div class="rules-panel" id="rulesPanel">
+                <hr class="rules-divider">
+                <div class="rules-chapter">Глава I. Общие положения и принципы правил сервера</div>
+                <ul class="rules-list">
+                    <li><i class="fa fa-user-shield"></i> <strong>I</strong> — При регистрации на сервер, игрок автоматически соглашается с правилами, для предотвращения жульничества на сервере и создания комфортной игровой среды для всех.</li>
+                    <li><i class="fa fa-users"></i> <strong>II</strong> — Сервер создан как пространство для комфортной, честной и совместной игры на версии Minecraft 1.21.4 <b>(ванилла)</b>. Основной упор делается на:
+                        <ul class="rules-sublist">
+                            <li>формирование сплочённого сообщества игроков;</li>
+                            <li>развитие дружелюбной атмосферы;</li>
+                            <li>полное исключение грифа, читов и токсичного поведения;</li>
+                            <li>сервер не стремится к массовости, а делает ставку на качественное взаимодействие между игроками.</li>
+                        </ul>
+                    </li>
+                    <li><i class="fa fa-handshake"></i> <strong>III</strong> — Участие в жизни сервера строится на следующих принципах:
+                        <ul class="rules-sublist">
+                            <li>Уважение — каждый игрок заслуживает вежливого и уважительного отношения.</li>
+                            <li>Неприкосновенность собственности — постройки, ресурсы и территория принадлежат только их создателям.</li>
+                            <li>Честность — запрещено использовать любые средства, нарушающие баланс или дающие нечестное преимущество.</li>
+                            <li>Безопасность — сервер защищён от гриферства, взломов и нарушений.</li>
+                            <li>Ответственность — каждый игрок несёт ответственность за свои действия, в том числе и в случае нарушения правил.</li>
+                        </ul>
+                    </li>
+                    <li><i class="fa fa-gavel"></i> <strong>IV</strong> — Администрация оставляет за собой право изменять и дополнять правила, уведомляя игроков об этом через сайт или серверные объявления. Незнание правил не освобождает от ответственности.</li>
+                    <li><i class="fa fa-scale-balanced"></i> <strong>V</strong> — Администрация стремится сохранять честную и прозрачную систему управления: наказания всегда аргументированы и могут быть обжалованы через систему поддержки.</li>
+                    <li><i class="fa fa-globe"></i> <strong>VI</strong> — Все правила распространяются как на действия в игровом мире, так и на поведение в чате, на форуме, сайте или иных официальных ресурсах проекта.</li>
+                </ul>
+
+                <div class="rules-chapter">Глава II. Запрещённые действия на сервере</div>
+                <div class="cheat-list-block">
+                    <div class="cheat-list-title"><i class="fa-solid fa-ban"></i> Список запрещённых читов и модификаций:</div>
+                    <ul class="cheat-list">
+                        <li>AutoMine</li><li>Nuker</li><li>SpeedNuker</li><li>FastBreak</li><li>FastPlace</li><li>ScaffoldWalk</li><li>VeinMiner</li><li>Excavator</li><li>TreeBot</li><li>AntiCactus</li><li>Liquids</li><li>BonemealAura</li>
+                        <li>Flight</li><li>CreativeFlight</li><li>BoatFly</li><li>Jetpack</li><li>SpeedHack</li><li>BunnyHop</li><li>HighJump</li><li>Glide</li><li>NoFall</li><li>Jesus</li><li>NoSlowdown</li><li>NoClip</li><li>Phase</li><li>Blink</li><li>AntiWaterPush</li><li>AntiEntityPush</li><li>AutoSprint</li><li>AutoSwim</li><li>AutoWalk</li><li>Blink</li>
+                        <li>Killaura</li><li>ClickAura</li><li>CrystalAura</li><li>MultiAura</li><li>AimAssist</li><li>BowAimbot</li><li>AutoSword</li><li>AutoArmor</li><li>AutoPotion</li><li>AutoTotem</li><li>AntiKnockback</li><li>TriggerBot</li><li>AnchorAura</li><li>Crits</li><li>TpAura</li>
+                        <li>X-Ray</li><li>ChestESP</li><li>CaveFinder</li><li>BarrierESP</li><li>Fullbright</li><li>NoWeather</li><li>NoFog</li><li>Radar</li><li>PlayerESP</li><li>MobESP</li><li>NameTags</li><li>Tracers</li><li>BlockOutline</li>
+                        <li>FancyChat</li><li>Spammer</li><li>Annoy</li><li>Derp</li><li>Headless</li><li>RainbowUI</li>
+                        <li>AutoFarm</li><li>AutoFish</li><li>AutoSoup</li><li>AutoPot</li><li>AutoTool</li><li>AutoSign</li><li>AutoBuild</li><li>AutoDrop</li><li>AutoSteal</li><li>AutoRespawn</li><li>FastEat</li><li>InventoryMove</li><li>BookHack</li><li>CameraNoClip</li><li>Timer</li><li>InventoryTweaks</li><li>GhostHand</li>
+                    </ul>
+                </div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Гриферство.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещено любое разрушение чужих построек, кража предметов, изменение ландшафта или вмешательство в чужие проекты без разрешения.</li>
+                            <li>При выявлении грифа будет проведено восстановление мира и выдано наказание (бан или блокировка действий, в зависимости от последствий).</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Использование читов и модификаций.</strong>
+                        <ul class="rules-sublist">
+                            <li>Категорически запрещены любые читы, дающие игровое преимущество игроку.</li>
+                            <li>Для просмотра запрещённых модификаций и читов, игрок имеет право просмотреть опубликованный отдельный список.</li>
+                            <li>Использование запрещённых модификаций и читов — повод для блокировки аккаунта.</li>
+                            <li>
+                                <span class="cheat-list-toggle" onclick="toggleCheatList()" id="cheatListToggle">Показать список запрещённых читов</span>
+                                <div class="cheat-list-block" id="cheatListBlock">
+                                    <div class="cheat-list-title"><i class="fa-solid fa-ban"></i> Список запрещённых читов и модификаций:</div>
+                                    <ul class="cheat-list">
+                                        <li>AutoMine</li><li>Nuker</li><li>SpeedNuker</li><li>FastBreak</li><li>FastPlace</li><li>ScaffoldWalk</li><li>VeinMiner</li><li>Excavator</li><li>TreeBot</li><li>AntiCactus</li><li>Liquids</li><li>BonemealAura</li>
+                                        <li>Flight</li><li>CreativeFlight</li><li>BoatFly</li><li>Jetpack</li><li>SpeedHack</li><li>BunnyHop</li><li>HighJump</li><li>Glide</li><li>NoFall</li><li>Jesus</li><li>NoSlowdown</li><li>NoClip</li><li>Phase</li><li>Blink</li><li>AntiWaterPush</li><li>AntiEntityPush</li><li>AutoSprint</li><li>AutoSwim</li><li>AutoWalk</li><li>Blink</li>
+                                        <li>Killaura</li><li>ClickAura</li><li>CrystalAura</li><li>MultiAura</li><li>AimAssist</li><li>BowAimbot</li><li>AutoSword</li><li>AutoArmor</li><li>AutoPotion</li><li>AutoTotem</li><li>AntiKnockback</li><li>TriggerBot</li><li>AnchorAura</li><li>Crits</li><li>TpAura</li>
+                                        <li>X-Ray</li><li>ChestESP</li><li>CaveFinder</li><li>BarrierESP</li><li>Fullbright</li><li>NoWeather</li><li>NoFog</li><li>Radar</li><li>PlayerESP</li><li>MobESP</li><li>NameTags</li><li>Tracers</li><li>BlockOutline</li>
+                                        <li>FancyChat</li><li>Spammer</li><li>Annoy</li><li>Derp</li><li>Headless</li><li>RainbowUI</li>
+                                        <li>AutoFarm</li><li>AutoFish</li><li>AutoSoup</li><li>AutoPot</li><li>AutoTool</li><li>AutoSign</li><li>AutoBuild</li><li>AutoDrop</li><li>AutoSteal</li><li>AutoRespawn</li><li>FastEat</li><li>InventoryMove</li><li>BookHack</li><li>CameraNoClip</li><li>Timer</li><li>InventoryTweaks</li><li>GhostHand</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Злоупотребление механиками игры.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещены баги-юзинг, дюпы, намеренное создание лагов, автокликеры, боты и скрипты.</li>
+                            <li>Обнаруженные баги необходимо немедленно сообщать администрации.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Токсичное поведение.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещены оскорбления, угрозы, травля, провокации, чрезмерный сарказм и цинизм в чате.</li>
+                            <li>Также запрещены любые формы дискриминации по расе, полу, нации, религии и другим признакам.</li>
+                            <li>При систематическом нарушении — мут, бан, либо занесение в чёрный список.</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Спам и реклама.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещена реклама сторонних серверов, проектов и пр., без согласования с администрацией.</li>
+                            <li>Также запрещены массовые сообщения, бессмысленные символы и раздражающий флуд в чате.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VI</strong> - <strong>Самоуправство и выдача себя за администрацию.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещено вводить игроков в заблуждение, используя ники или действия, имитирующие администрацию.</li>
+                            <li>Запрещена самовольная "проверка" игроков, угрозы наказания или вымогательство.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="rules-chapter">Глава III. Система наказаний и восстановление справедливости</div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Принцип соразмерности и индивидуального подхода.</strong>
+                        <ul class="rules-sublist">
+                            <li>Все наказания выдаются исходя из степени тяжести нарушения, его повторяемости и последствий для других игроков.</li>
+                            <li>Нарушители получают предупреждение или наказание только после фиксации факта нарушения (логами, свидетелями, видео и прочим).</li>
+                            <li>Цель наказания — не кара, а защита честной среды и предупреждение дальнейших нарушений.</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Виды наказаний, применяемые администрацией.</strong>
+                        <ul class="rules-sublist">
+                            <li><strong>Устное предупреждение</strong> — при мелких, случайных нарушениях.</li>
+                            <li><strong>Мут (временное лишение возможности писать в чат)</strong> — за токсичность, флуд, провокации.</li>
+                            <li><strong>Кик/временный бан</strong> — за грубое поведение, читы, гриферство первой степени.</li>
+                            <li><strong>Перманентный бан (блокировка аккаунта)</strong> — за повторные нарушения, серьёзный гриф, распространение читов и т.п.</li>
+                            <li><strong>Блокировка действий (ограничение доступа к определённым командам, постройкам и пр.)</strong> — как промежуточная мера для нарушителей.</li>
+                            <li><strong>Чёрный список</strong> — полное исключение игрока из сообщества с аннулированием прав на участие.</li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Восстановление мира после грифа или разрушений.</strong>
+                        <ul class="rules-sublist">
+                            <li>Пострадавшие от гриферства или умышленного вмешательства могут обратиться в техническую поддержку через сайт.</li>
+                            <li>После расследования и подтверждения факта ущерб будет восстановлен силами администрации (по возможности — в прежнем виде).</li>
+                            <li>При массовом ущербе может быть применён откат к точке сохранения мира.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Обжалование наказаний</strong>
+                        <ul class="rules-sublist">
+                            <li>Любой игрок имеет право на подачу апелляции через форму на официальном сайте сервера.</li>
+                            <li>Апелляция рассматривается индивидуально, с учётом всех обстоятельств, доказательств и истории игрока и обоснований.</li>
+                            <li>При выявлении ошибки администрация обязуется пересмотреть наказание и, при необходимости, публично принести извинения.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="rules-chapter">Глава IV. Поведение в чате и на внешних ресурсах</div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Основные нормы общения.</strong>
+                        <ul class="rules-sublist">
+                            <li>Общение на сервере строится на принципах взаимного уважения и корректности.</li>
+                            <li>Запрещены любые формы хамства, оскорблений, личных нападок и агрессии, независимо от контекста.</li>
+                            <li>Все игроки обязаны воздерживаться от конфликтов в общем чате. Споры решаются через личные сообщения или обращение к администрации.</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Токсичность и провокации.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещено провоцировать других игроков на ссоры, провоцировать негатив, использовать пассивную агрессию, издевки, высмеивание.</li>
+                            <li>Запрещены токсичные мемы, шутки, связанные с насилием, самоубийством, дискриминацией и травлей.</li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Тематика общения.</strong>
+                        <ul class="rules-sublist">
+                            <li>В игровом чате запрещено обсуждать политику, религию, взрослые темы, а также провокационные и конфликтные темы, способные вызвать негатив.</li>
+                            <li>Допускается лёгкий оффтоп и юмор, если они не мешают другим участникам и не нарушают атмосферу сервера.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Спам, флуд, капс.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещены бессмысленные повторяющиеся сообщения, чрезмерное использование заглавных букв (КАПС), символов и визуального шума.</li>
+                            <li>Также запрещены команды, выдаваемые с целью спама или помех другим игрокам (вкл./выкл. звуков, телепортации, и т.п.).</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Реклама и самореклама.</strong>
+                        <ul class="rules-sublist">
+                            <li>Запрещена прямая и скрытая реклама сторонних серверов, чатов, YouTube-каналов и социальных сетей без разрешения администрации.</li>
+                            <li>Запрещена массовая рассылка приглашений, даже в личные сообщения.</li>
+                            <li>Рекламные материалы от администрации или партнёров будут публиковаться официально, по регламенту.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VI</strong> - <strong>Внешние ресурсы и Discord.</strong>
+                        <ul class="rules-sublist">
+                            <li>Все вышеуказанные нормы поведения действуют также на официальных каналах проекта: Discord, сайт, форум и другие площадки.</li>
+                            <li>Оскорбления, провокации или дискриминация в Discord-чате или голосовых каналах будут приравнены к игровым нарушениям.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VII</strong> - <strong>Жалобы на поведение.</strong>
+                        <ul class="rules-sublist">
+                            <li>Нарушения в чате могут быть зафиксированы и направлены в администрацию через скриншоты, логи или видео.</li>
+                            <li>Уважительное обращение при подаче жалобы повышает шансы на быструю и справедливую реакцию.</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Повторное участие после наказания.</strong>
+                        <ul class="rules-sublist">
+                            <li>Игроки, получившие временные баны, могут вернуться на сервер после истечения срока, при условии принятия и соблюдения правил.</li>
+                            <li>Администрация вправе установить испытательный срок с наблюдением за поведением вернувшегося игрока.</li>
+                            <li>Рецидив ведёт к жёстким мерам — вплоть до полной блокировки без возможности апелляции.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="rules-chapter">Глава V. Территории, постройки и право собственности</div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Принцип неприкосновенности.</strong>
+                        <ul class="rules-sublist">
+                            <li>Все постройки, участки земли, сундуки, фермы, животные и иные ресурсы, созданные или занятые игроком, являются его личной собственностью.</li>
+                            <li>Вторжение, разрушение, изменение или использование чужих объектов без разрешения строго запрещены.</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Приватизация территорий.</strong>
+                        <ul class="rules-sublist">
+                            <li>На сервере действует система добровольной регистрации территорий (через знаки, метки или команду, если поддерживаются плагины).</li>
+                            <li>Однако даже неприватизированная территория не является общественной, если на ней есть признаки чьей-либо деятельности (строения, заборы, сундуки, огороды и т.п.).</li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Совместные территории и проекты.</strong>
+                        <ul class="rules-sublist">
+                            <li>При создании общих ферм, баз или городов рекомендуется оформлять правила пользования — устные или письменные (через доску объявлений Discord).</li>
+                            <li>В случае конфликта за общее имущество спор решается администрацией на основе логов и внутренней договорённости между участниками проекта.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Запреты на действия с чужой собственностью.</strong>
+                        <ul class="rules-sublist">
+                            <li>Кражи из сундуков и инвентарей других игроков;</li>
+                            <li>Использование чужих ферм, механизмов и порталов без разрешения;</li>
+                            <li>Заселение рядом с базой другого игрока без согласования (минимум 100 блоков, если не согласовано иначе).</li>
+                            <li>При обнаружении нарушений возможен откат, компенсация и наказание.</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Заброшенные территории.</strong>
+                        <ul class="rules-sublist">
+                            <li>Если игрок не заходил более 30 дней и не оставил уведомления об отсутствии, его имущество может быть перенесено или освобождено.</li>
+                            <li>Однако уничтожение или захват имущества до вмешательства администрации запрещены.</li>
+                            <li>Администрация вправе сохранять или перемещать объекты на "музейную зону" сервера.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VI</strong> - <strong>Публичные зоны и сервера-спавны.</strong>
+                        <ul class="rules-sublist">
+                            <li>Центральные зоны (спавн, магазины, дороги и т.п.) находятся под охраной администрации.</li>
+                            <li>Любые постройки в этих зонах разрешены только после согласования.</li>
+                            <li>Разрушение или засорение публичных территорий наказывается как гриф.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VII</strong> - <strong>Природа и среда</strong>
+                        <ul class="rules-sublist">
+                            <li>Стихийная вырубка лесов, неконтролируемое уничтожение ландшафта и безответственное размещение ферм (особенно ломающих производительность) не приветствуются.</li>
+                            <li>При массовом или вредоносном вмешательстве в природу (например, выкапывание огромных ям без цели, разрушение биомов и т.п.) игроку может быть выдано предупреждение или наказание.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="rules-chapter">Глава VI. Игровой процесс и экономика</div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Честная игра — основа проекта.</strong>
+                        <ul class="rules-sublist">
+                            <li>Все действия в игре должны соответствовать принципам честной добычи, сбалансированной экономики и равных возможностей.</li>
+                            <li>Запрещено использовать сторонние инструменты, макросы или читы для автоматизации процесса (добычи, крафта, торговли и т.п.).</li>
+                            <li>Допускаются только те автопроцессы, которые можно реализовать в ванильном Minecraft без внешнего вмешательства.</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Фермы и автоматизация.</strong>
+                        <ul class="rules-sublist">
+                            <li>Разрешено строительство автоматических ферм (каменоломни, тростниковые, железные и пр.), если они:</li>
+                            <li style="margin-left:18px;">- Не создают лагов;</li>
+                            <li style="margin-left:18px;">- Построены без нарушений и багов;</li>
+                            <li style="margin-left:18px;">- Имеют ограниченный объём (администрация может ввести лимиты на количество активных сущностей, хопперов и т.п.).</li>
+                            <li>Запрещены:</li>
+                            <li style="margin-left:18px;">- Машины, использующие баги или технические уязвимости;</li>
+                            <li style="margin-left:18px;">- Спавн-блоки из внешних модов (если сервер ванильный);</li>
+                            <li style="margin-left:18px;">- Постоянные «анти-АФК» механизмы.</li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Торговля между игроками.</strong>
+                        <ul class="rules-sublist">
+                            <li>Торговля разрешена в любом виде, если она происходит добровольно и на равных условиях.</li>
+                            <li>Рекомендуется использовать честные магазины, таблички и безопасные обмены.</li>
+                            <li>Обман в торговле (например, ложные таблички, ловушки, фальш-ресурсы) приравнивается к грифу.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Внутриигровая валюта и экономика.</strong>
+                        <ul class="rules-sublist">
+                            <li>Сервер может использовать условную валюту или бартер между игроками.</li>
+                            <li>Все правила экономики устанавливаются администрацией и не должны нарушаться игроками в обход системы.</li>
+                            <li>Мошенничество с валютой или создание искусственных инфляций строго запрещены.</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Публичные магазины и рыночные зоны.</strong>
+                        <ul class="rules-sublist">
+                            <li>Постройки магазинов допускаются в специально отведённых местах (по согласованию или на определённой территории).</li>
+                            <li>Цены, оформление и ассортимент контролируются только самими игроками, за исключением нарушений или сговора.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VI</strong> - <strong>Игровые ивенты, награды, турниры</strong>
+                        <ul class="rules-sublist">
+                            <li>Администрация вправе проводить конкурсы, квесты и другие активности с наградами.</li>
+                            <li>Участие в таких мероприятиях — добровольное, и должно осуществляться честно, без внешнего вмешательства.</li>
+                            <li>Любое злоупотребление и попытки «взломать» ивент ведут к дисквалификации.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="rules-chapter">Глава VII. Нарушения и конфликты между игроками</div>
+                <ul class="rules-list">
+                    <li><strong>I</strong> - <strong>Конфликты как часть человеческого общения.</strong>
+                        <ul class="rules-sublist">
+                            <li>Сервер — это сообщество живых людей, и конфликты могут возникать.</li>
+                            <li>Главное правило: любые споры решаются без агрессии и мести, только через диалог или с помощью администрации.</li>
+                            <li>Самосуд, провокации, попытки «отстоять правду» через гриф или травлю — строго запрещены.</li>
+                        </ul>
+                    </li>
+                    <li><strong>II</strong> - <strong>Каналы обращения.</strong>
+                        <ul class="rules-sublist">
+                            <li>Игрок, столкнувшийся с несправедливостью, нарушением, токсичным поведением или спорной ситуацией, должен:</li>
+                            <li style="margin-left:18px;">- Зафиксировать факт (скриншот, видео, лог чата);</li>
+                            <li style="margin-left:18px;">- Обратиться в техническую поддержку через сайт;</li>
+                            <li style="margin-left:18px;">- Воздержаться от конфликтов до решения вопроса.</li>
+                            <li>Администрация не разбирает конфликты «на словах». Доказательства — обязательны.</li>
+                        </ul>
+                    </li>
+                    <li><strong>III</strong> - <strong>Медиация (примирение).</strong>
+                        <ul class="rules-sublist">
+                            <li>В случае взаимного конфликта администрация вправе пригласить обе стороны на разбор.</li>
+                            <li>Возможны решения:</li>
+                            <li style="margin-left:18px;">- Устное примирение;</li>
+                            <li style="margin-left:18px;">- Предупреждение обеим сторонам;</li>
+                            <li style="margin-left:18px;">- Временное ограничение контакта (мут друг для друга);</li>
+                            <li style="margin-left:18px;">- Возмещение ущерба через администрацию.</li>
+                        </ul>
+                    </li>
+                    <li><strong>IV</strong> - <strong>Систематические конфликты и вражда.</strong>
+                        <ul class="rules-sublist">
+                            <li>Если игрок регулярно провоцирует ссоры или не может сосуществовать с другими — ему будет предложен переход в одиночную зону или временное исключение.</li>
+                            <li>Сервер не обязан удерживать токсичных или враждебных участников.</li>
+                        </ul>
+                    </li>
+                    <li><strong>V</strong> - <strong>Злоупотребление жалобами.</strong>
+                        <ul class="rules-sublist">
+                            <li>Частое, необоснованное или ложное доносительство — тоже нарушение.</li>
+                            <li>Игроки, использующие жалобы как инструмент давления или манипуляций, могут получить предупреждение или ограничение права на жалобы.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VI</strong> - <strong>Имущественные конфликты.</strong>
+                        <ul class="rules-sublist">
+                            <li>В случае споров за ресурсы, территории или совместные постройки:</li>
+                            <li style="margin-left:18px;">- Важно наличие предварительных договорённостей (в устной или письменной форме);</li>
+                            <li style="margin-left:18px;">- Спор разрешается через проверку логов, сообщений и заявлений;</li>
+                            <li>Администрация может принять решение о разделе, компенсации или ограничении доступа к спорной зоне.</li>
+                        </ul>
+                    </li>
+                    <li><strong>VII</strong> - <strong>Участие третьих лиц и зрителей.</strong>
+                        <ul class="rules-sublist">
+                            <li>Зрители, подстрекающие стороны конфликта, могут быть наказаны как соучастники.</li>
+                            <li>Лучшее поведение — не лить масло в огонь, а предложить помощь или обратиться к модератору.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="rules-quote">
+                <div style="margin-bottom:10px;"><strong>Преамбула к концу правил.</strong></div>
+                <div>
+                    <em>Этот сервер — не просто технический проект. Это — убежище.<br>
+                    Убежище от глупости, ненависти, вражды и хаоса.<br>
+                    Это место, где каждый человек может построить не только дом из камня и досок, <strong>но и доверие, уважение и память.</strong><br>
+                    Здесь важны не правила сами по себе, <strong>а причина, почему они существуют:</strong><br>
+                    чтобы мы могли сосуществовать, играть, общаться и жить как люди.<br>
+                    <strong>Если ты читаешь это и чувствуешь, что тебе откликается — ты уже наш.</strong><br>
+                    Добро пожаловать.</em>
+                </div>
+            </div>
+        </div>
+        <div class="rules-footer">
+            Спасибо Dimusus за разработку правил&lt;3
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var panel = document.getElementById('rulesPanel');
+                if(panel) {
+                    panel.style.transition = 'background 0.7s cubic-bezier(.4,0,.2,1)';
+                    panel.style.background = 'rgba(0,0,0,0.85)';
+                }
+            }, 3000);
+        });
+        function toggleCheatList() {
+            var block = document.getElementById('cheatListBlock');
+            var toggle = document.getElementById('cheatListToggle');
+            if (block.classList.contains('active')) {
+                block.classList.remove('active');
+                toggle.textContent = 'Показать список запрещённых читов';
+            } else {
+                block.classList.add('active');
+                toggle.textContent = 'Скрыть список запрещённых читов';
+            }
+        }
+    </script>
+</body>
+</html>

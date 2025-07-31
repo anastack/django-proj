@@ -1,0 +1,604 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NC - Увлекательное кубическое приключение</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="{% static 'background.png' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: url("{% static 'background.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .background-blocks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .block {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            border-radius: 8px;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .block:nth-child(odd) {
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(5deg); }
+            50% { transform: translate(-10px, -40px) rotate(10deg); }
+            75% { transform: translate(-30px, -20px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px;
+        }
+
+        .hero-section {
+            padding: 40px;
+            max-width: 600px;
+        }
+
+        .hero-title {
+            font-size: 3.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            line-height: 1.2;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .hero-title-gradient {
+            background: linear-gradient(45deg, #64b5f6, #1e88e5, #42a5f5, #90caf9);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: gradientShift 3s ease-in-out infinite, fadeInUp 1s ease forwards;
+            filter: drop-shadow(0 2px 4px rgba(30, 136, 229, 0.4));
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 1.5s;
+        }
+
+        .register-button {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 20px 45px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 4px 16px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 2s;
+            z-index: 20;
+        }
+
+        .register-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+
+        .register-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .register-button:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow:
+                0 20px 40px rgba(31, 38, 135, 0.15),
+                0 12px 24px rgba(0, 0, 0, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .register-button:hover::before {
+            left: 100%;
+        }
+
+        .register-button:hover::after {
+            opacity: 1;
+        }
+
+        .register-button:active {
+            transform: translateY(-4px) scale(0.98);
+            box-shadow:
+                0 10px 20px rgba(31, 38, 135, 0.1),
+                0 6px 12px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-info {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: right;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 2.5s;
+            z-index: 20;
+        }
+
+        .season-info {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .season-nc {
+            background: linear-gradient(45deg, #64b5f6, #1e88e5, #42a5f5, #90caf9);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            color: #64b5f6;
+        }
+
+        .separator {
+            margin: 0 8px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Burger Menu Styles */
+        .burger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .burger-menu:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .burger-icon {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .burger-icon::before,
+        .burger-icon::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .burger-icon::before {
+            top: -8px;
+        }
+
+        .burger-icon::after {
+            top: 8px;
+        }
+
+        .burger-menu.active .burger-icon {
+            background: transparent;
+        }
+
+        .burger-menu.active .burger-icon::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+
+        .burger-menu.active .burger-icon::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .burger-dropdown {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+        .burger-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .burger-center-menu {
+            /* background: rgba(30, 30, 40, 0.98); */
+            background: none;
+            border-radius: 24px;
+            box-shadow: none;
+            padding: 40px 32px;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            text-align: center;
+        }
+        .burger-center-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 16px 0;
+            border-radius: 12px;
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+        }
+        .burger-center-menu a:hover {
+            color: #64b5f6;
+            background: rgba(100, 181, 246, 0.08);
+            transform: scale(1.04);
+        }
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            .hero-section {
+                max-width: 100%;
+                width: 100%;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .hero-description {
+                font-size: 1.1rem;
+            }
+
+            .footer-info {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin-top: 40px;
+                text-align: center;
+            }
+
+            .footer-links {
+                font-size: 0.8rem;
+            }
+
+            .separator {
+                margin: 0 4px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-links, .separator {
+                display: none !important;
+            }
+
+            .burger-menu {
+                display: flex;
+            }
+
+            .footer-info {
+                position: static;
+                margin-top: 30px;
+                right: auto;
+                left: auto;
+                bottom: auto;
+                width: 100%;
+                text-align: center;
+                z-index: 20;
+            }
+
+            .container {
+                padding-bottom: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .register-button {
+                padding: 16px 35px;
+                font-size: 1rem;
+            }
+
+            .burger-menu {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .burger-dropdown {
+                top: 75px;
+                right: 15px;
+                min-width: 200px;
+            }
+
+            .burger-dropdown a {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+        }
+
+        .no-fade .word,
+        .no-fade .hero-title-gradient,
+        .no-fade .hero-description,
+        .no-fade .register-button,
+        .no-fade .footer-info {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Burger Menu -->
+    <div class="burger-menu">
+        <span class="burger-icon"></span>
+    </div>
+    <div class="menu-overlay"></div>
+    <div class="burger-dropdown">
+        <div class="burger-center-menu">
+            <a href="rules.html">Правила</a>
+            <a href="support.html">Тех. поддержка</a>
+            <a href="team.html">Команда проекта</a>
+            <a href="story.html">Сюжет</a>
+        </div>
+    </div>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <span class="word" style="animation-delay: 0.2s;">Создай</span> 
+                <span class="word" style="animation-delay: 0.4s;">свой</span><br>
+                <span class="hero-title-gradient" style="animation-delay: 0.6s;">идеальный</span><br>
+                <span class="word" style="animation-delay: 0.8s;">мир</span>
+            </h1>
+            
+            <p class="hero-description">
+                «Самый главный враг — время»
+            </p>
+            
+            <a href="#" class="register-button">Регистрация</a>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <div class="season-info">Сезон 1 — <span class="season-nc">NC</span></div>
+        <div class="footer-links">
+           <a href="{% url 'info' %}">Информация</a>
+        <span class="separator">|</span>
+        <a href="{% url 'rules' %}">Правила</a>
+        <span class="separator">|</span>
+        <a href="{% url 'support' %}">Тех. поддержка</a>
+        <span class="separator">|</span>
+        <a href="{% url 'team' %}">Команда проекта</a>
+        <span class="separator">|</span>
+        <a href="{% url 'story' %}">Сюжет</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('visited')) {
+                document.body.classList.add('no-fade');
+            } else {
+                localStorage.setItem('visited', '1');
+            }
+            const burgerMenu = document.querySelector('.burger-menu');
+            const burgerDropdown = document.querySelector('.burger-dropdown');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            function toggleMenu() {
+                burgerMenu.classList.toggle('active');
+                burgerDropdown.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+            }
+            function closeMenu() {
+                burgerMenu.classList.remove('active');
+                burgerDropdown.classList.remove('active');
+                menuOverlay.classList.remove('active');
+            }
+            burgerMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+            menuOverlay.addEventListener('click', closeMenu);
+            const menuLinks = burgerDropdown.querySelectorAll('a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeMenu();
+                }
+            });
+            burgerDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            const allLinks = document.querySelectorAll('a');
+            allLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    console.log('Клик по ссылке:', this.href);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
